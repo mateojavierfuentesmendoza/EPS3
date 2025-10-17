@@ -1,136 +1,91 @@
 import java.util.*;
 
-class administrativo {
-    String hora;
-    String tipo;
-    String paciente;
-    int edad;
-    String id;
-    String direccion;
-    String plan;
-    String motivo;
-    boolean confirmada;
-
-    public Cita(String hora, String tipo, String paciente, int edad, String id, String direccion, String plan, String motivo) {
-        this.hora = hora;
-        this.tipo = tipo;
-        this.paciente = paciente;
-        this.edad = edad;
-        this.id = id;
-        this.direccion = direccion;
-        this.plan = plan;
-        this.motivo = motivo;
-        this.confirmada = false;
-    }
-
-    public void mostrarDetalles() {
-        System.out.println("Hora: " + hora);
-        System.out.println("Tipo: " + tipo);
-        System.out.println("Paciente: " + paciente);
-        System.out.println("Edad: " + edad);
-        System.out.println("ID: " + id);
-        System.out.println("Direccion: " + direccion);
-        System.out.println("Plan: " + plan);
-        System.out.println("Motivo: " + motivo);
-        System.out.println("Estado: " + (confirmada ? "Confirmada" : "No confirmada"));
-    }
-}
-
-public class PanelAdministrativoEPS {
-
-    static Scanner scanner = new Scanner(System.in);
-    static Map<String, Cita> agenda = new LinkedHashMap<>();
-
+public class administrativo {
     public static void main(String[] args) {
-        cargarCitasDeEjemplo();
-        menuPrincipal();
-    }
+        Scanner sc = new Scanner(System.in);
+        List<String> citas = new ArrayList<>();
+        boolean salir = false;
 
-    static void menuPrincipal() {
-        System.out.println("=== Bienvenido Mateo - Panel Administrativo EPS ===");
-        System.out.println("Fecha: 10/10/2025");
-        System.out.println("1. Ver agenda del dia");
-        System.out.println("2. Ver detalles de una cita");
-        System.out.println("3. Confirmar cita");
-        System.out.println("4. Cancelar cita");
-        System.out.println("5. Salir");
+        while (!salir) {
+            System.out.println("=== EPS - Panel Administrativo ===");
+            System.out.println("1. Ver citas agendadas");
+            System.out.println("2. Agregar nueva cita");
+            System.out.println("3. Cancelar cita");
+            System.out.println("4. Confirmar cita");
+            System.out.println("5. Salir");
+            System.out.print("Opción: ");
+            int opcion = sc.nextInt();
+            sc.nextLine();
 
-        int opcion = scanner.nextInt();
-        scanner.nextLine(); // limpiar buffer
-
-        switch (opcion) {
-            case 1 -> verAgenda();
-            case 2 -> verDetallesCita();
-            case 3 -> confirmarCita();
-            case 4 -> cancelarCita();
-            case 5 -> System.out.println("Cerrando sesion...");
-            default -> {
-                System.out.println("Opcion invalida.");
-                menuPrincipal();
+            switch (opcion) {
+                case 1:
+                    if (citas.isEmpty()) System.out.println("No hay citas registradas.");
+                    else {
+                        System.out.println("\n=== Citas registradas ===");
+                        for (int i = 0; i < citas.size(); i++) {
+                            System.out.println((i + 1) + ". " + citas.get(i));
+                        }
+                    }
+                    break;
+                case 2:
+                    System.out.print("Fecha (dd/mm/aaaa): ");
+                    String fecha = sc.nextLine();
+                    System.out.print("Hora: ");
+                    String hora = sc.nextLine();
+                    System.out.print("Tipo de cita: ");
+                    String tipo = sc.nextLine();
+                    System.out.print("Nombre del paciente: ");
+                    String nombre = sc.nextLine();
+                    System.out.print("Identificación: ");
+                    String id = sc.nextLine();
+                    System.out.print("Teléfono: ");
+                    String tel = sc.nextLine();
+                    System.out.print("Doctor asignado: ");
+                    String doctor = sc.nextLine();
+                    String nuevaCita = fecha + " | " + hora + " | " + tipo + " | Paciente: " + nombre + " | ID: " + id + " | Doctor: " + doctor;
+                    citas.add(nuevaCita);
+                    System.out.println("\nCita registrada correctamente.\n");
+                    break;
+                case 3:
+                    if (citas.isEmpty()) System.out.println("No hay citas para cancelar.");
+                    else {
+                        System.out.println("\n=== Citas disponibles ===");
+                        for (int i = 0; i < citas.size(); i++) System.out.println((i + 1) + ". " + citas.get(i));
+                        System.out.print("Seleccione el número de la cita a cancelar: ");
+                        int cancelar = sc.nextInt();
+                        sc.nextLine();
+                        if (cancelar > 0 && cancelar <= citas.size()) {
+                            System.out.println("¿Confirmar cancelación? (s/n): ");
+                            String confirm = sc.nextLine();
+                            if (confirm.equalsIgnoreCase("s")) {
+                                citas.remove(cancelar - 1);
+                                System.out.println("Cita cancelada correctamente.");
+                            } else System.out.println("Cancelación anulada.");
+                        } else System.out.println("Número inválido.");
+                    }
+                    break;
+                case 4:
+                    if (citas.isEmpty()) System.out.println("No hay citas para confirmar.");
+                    else {
+                        System.out.println("\n=== Citas pendientes ===");
+                        for (int i = 0; i < citas.size(); i++) System.out.println((i + 1) + ". " + citas.get(i));
+                        System.out.print("Seleccione el número de la cita a confirmar: ");
+                        int conf = sc.nextInt();
+                        sc.nextLine();
+                        if (conf > 0 && conf <= citas.size()) {
+                            System.out.println("Cita confirmada: " + citas.get(conf - 1));
+                        } else System.out.println("Número inválido.");
+                    }
+                    break;
+                case 5:
+                    salir = true;
+                    System.out.println("Saliendo del sistema administrativo...");
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
             }
+            System.out.println();
         }
+        sc.close();
     }
-
-    static void verAgenda() {
-        System.out.println("\n--- Agenda del dia 10/10/2025 ---");
-        for (Map.Entry<String, Cita> entry : agenda.entrySet()) {
-            Cita cita = entry.getValue();
-            System.out.println(cita.hora + " - " + cita.tipo + " - " +
-                    (cita.confirmada ? "✅ Confirmada" : "❌ No confirmada"));
-        }
-        System.out.println();
-        menuPrincipal();
-    }
-
-    static void verDetallesCita() {
-        System.out.println("\nIngrese la hora de la cita (ej: 10:00):");
-        String hora = scanner.nextLine();
-
-        Cita cita = agenda.get(hora);
-        if (cita != null) {
-            System.out.println("\n--- Detalles de la cita ---");
-            cita.mostrarDetalles();
-        } else {
-            System.out.println("⛔ No hay cita registrada a esa hora.");
-        }
-
-        System.out.println();
-        menuPrincipal();
-    }
-
-    static void confirmarCita() {
-        System.out.println("\nIngrese la hora de la cita a confirmar:");
-        String hora = scanner.nextLine();
-
-        Cita cita = agenda.get(hora);
-        if (cita != null) {
-            if (cita.confirmada) {
-                System.out.println("⚠️ La cita ya esta confirmada.");
-            } else {
-                cita.confirmada = true;
-                System.out.println("✅ Cita confirmada con exito.");
-            }
-        } else {
-            System.out.println("⛔ No hay cita a esa hora.");
-        }
-
-        System.out.println();
-        menuPrincipal();
-    }
-
-    static void cancelarCita() {
-        System.out.println("\nIngrese la hora de la cita a cancelar:");
-        String hora = scanner.nextLine();
-
-        if (agenda.containsKey(hora)) {
-            agenda.remove(hora);
-            System.out.println("❌ Cita cancelada.");
-        } else {
-            System.out.println("⛔ No existe cita a esa hora.");
-        }
-
-        System.out.println();
-        menuPrincipal();
-    }
-
 }
