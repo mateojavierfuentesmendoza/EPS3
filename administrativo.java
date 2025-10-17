@@ -1,6 +1,6 @@
 import java.util.*;
 
-public class administrativo {
+public class administrativo{
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         List<String> citas = new ArrayList<>();
